@@ -1,0 +1,6 @@
+---
+__syslogd_user: root
+__syslogd_group: wheel
+__syslogd_service: syslogd
+__syslogd_conf_dir: /etc
+__syslogd_conf_d_dirs: []

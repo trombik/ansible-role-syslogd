@@ -1,0 +1,7 @@
+---
+
+- name: Enable syslogd
+  ansible.builtin.service:
+    name: "{{ syslogd_service }}"
+    enabled: yes
+    arguments: "{{ syslogd_flags }}"
