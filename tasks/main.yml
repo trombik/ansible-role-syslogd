@@ -25,6 +25,7 @@
   ansible.builtin.assert:
     that:
       - "'state' in item"
+      - "'path' in item"
       - item['state'] == 'present' or item['state'] == 'absent'
   with_items: "{{ syslogd_config_flagments }}"
 
