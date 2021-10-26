@@ -4,7 +4,6 @@ require "serverspec"
 service = "syslogd"
 config  = "/etc/syslog.conf"
 ports   = [514]
-log_dir = "/var/log"
 conf_d_dirs = case os[:family]
               when "freebsd"
                 %w[/etc/syslog.d /usr/local/etc/syslog.d]

@@ -94,4 +94,3 @@
           content: |
             # empty
     syslogd_config_flagments: "{{ os_syslogd_config_flagments[ansible_os_family] }}"
-
