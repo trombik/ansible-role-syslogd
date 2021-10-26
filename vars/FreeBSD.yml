@@ -1,0 +1,3 @@
+---
+__syslogd_db_dir: /var/db/syslogd
+__syslogd_conf_dir: /usr/local/etc/syslogd

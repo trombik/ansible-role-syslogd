@@ -1,0 +1,6 @@
+---
+
+- name: Install syslogd
+  pkgng:
+    name: syslogd
+    state: present

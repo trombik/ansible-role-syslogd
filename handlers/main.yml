@@ -1,0 +1,6 @@
+---
+
+- name: Restart syslogd
+  service:
+    name: syslogd
+    state: restarted
