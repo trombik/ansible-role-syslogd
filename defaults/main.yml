@@ -1,9 +1,11 @@
 ---
-syslogd_user: syslogd
-syslogd_group: syslogd
-syslogd_log_dir: /var/log/syslogd
-syslogd_db_dir: "{{ __syslogd_db_dir }}"
-syslogd_service: syslogd
+syslogd_user: "{{ __syslogd_user }}"
+syslogd_group: "{{ __syslogd_group }}"
+syslogd_log_dir: /var/log
+syslogd_service: "{{ __syslogd_service }}"
 syslogd_conf_dir: "{{ __syslogd_conf_dir }}"
-syslogd_conf_file: "{{ __syslogd_conf_dir }}/syslogd.conf"
+syslogd_conf_file: "{{ syslogd_conf_dir }}/syslog.conf"
+syslogd_conf_d_dirs: "{{ __syslogd_conf_d_dirs }}"
+syslogd_config: ""
+syslogd_config_flagments: []
 syslogd_flags: ""

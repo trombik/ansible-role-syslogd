@@ -2,5 +2,5 @@
 
 - name: Restart syslogd
   service:
-    name: syslogd
+    name: "{{ syslogd_service }}"
     state: restarted

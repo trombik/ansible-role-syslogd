@@ -1,37 +1,53 @@
 ---
 # tasks file for ansible-role-syslogd
 
-- include_vars: "{{ ansible_os_family }}.yml"
+- name: "Include {{ ansible_os_family }}.yml"
+  include_vars: "{{ ansible_os_family }}.yml"
 
-- include: "install-{{ ansible_os_family }}.yml"
+- name: "Include install-{{ ansible_os_family }}.yml"
+  include: "install-{{ ansible_os_family }}.yml"
 
-- name: Create log directory
-  file:
-    path: "{{ syslogd_log_dir }}"
-    mode: 0755
-    owner: "{{ syslogd_user }}"
-    group: "{{ syslogd_group }}"
+- name: Create syslogd_conf_d_dirs
+  ansible.builtin.file:
     state: directory
-  notify: Restart syslogd
+    mode: "0755"
+    path: "{{ item }}"
+  with_items: "{{ syslogd_conf_d_dirs }}"
 
-- name: Create db directory
-  file:
-    path: "{{ syslogd_db_dir }}"
-    mode: 0755
-    owner: "{{ syslogd_user }}"
-    group: "{{ syslogd_group }}"
-    state: directory
-  notify: Restart syslogd
-
-- name: Create syslogd.conf
-  template:
-    src: syslogd.conf.j2
+- name: Create syslogd_conf_file
+  ansible.builtin.template:
+    src: syslog.conf.j2
     dest: "{{ syslogd_conf_file }}"
-    validate: echo %s
+    mode: "0644"
+  notify: Restart syslogd
+
+- name: Assert syslogd_config_flagments
+  ansible.builtin.assert:
+    that:
+      - "'state' in item"
+      - item['state'] == 'present' or item['state'] == 'absent'
+  with_items: "{{ syslogd_config_flagments }}"
+
+- name: Create syslogd_config_flagments
+  ansible.builtin.template:
+    src: flagment.conf.j2
+    dest: "{{ item['path'] }}"
+    mode: "{{ item['mode'] | default('0644') }}"
+  with_items: "{{ syslogd_config_flagments }}"
+  when:
+    - item['state'] == 'present'
+  notify: Restart syslogd
+
+- name: Delete syslogd_config_flagments
+  ansible.builtin.file:
+    path: "{{ item['path'] }}"
+    state: absent
+  with_items: "{{ syslogd_config_flagments }}"
+  when:
+    - item['state'] == 'absent'
   notify: Restart syslogd
 
 - name: Start syslogd
-  service:
+  ansible.builtin.service:
     name: "{{ syslogd_service }}"
-    enabled: true
     state: started

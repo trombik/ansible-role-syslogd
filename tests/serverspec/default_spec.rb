@@ -1,48 +1,45 @@
 require "spec_helper"
 require "serverspec"
 
-package = "syslogd"
 service = "syslogd"
-config  = "/etc/syslogd/syslogd.conf"
-user    = "syslogd"
-group   = "syslogd"
-ports   = [PORTS]
-log_dir = "/var/log/syslogd"
-db_dir  = "/var/lib/syslogd"
-
-case os[:family]
-when "freebsd"
-  config = "/usr/local/etc/syslogd.conf"
-  db_dir = "/var/db/syslogd"
-end
-
-describe package(package) do
-  it { should be_installed }
-end
+config  = "/etc/syslog.conf"
+ports   = [514]
+log_dir = "/var/log"
+conf_d_dirs = case os[:family]
+              when "freebsd"
+                %w[/etc/syslog.d /usr/local/etc/syslog.d]
+              else
+                []
+              end
 
 describe file(config) do
+  it { should exist }
   it { should be_file }
-  its(:content) { should match Regexp.escape("syslogd") }
+  it { should be_mode 644 }
+  its(:content) { should match Regexp.escape("Managed by ansible") }
 end
 
-describe file(log_dir) do
-  it { should exist }
-  it { should be_mode 755 }
-  it { should be_owned_by user }
-  it { should be_grouped_into group }
-end
-
-describe file(db_dir) do
-  it { should exist }
-  it { should be_mode 755 }
-  it { should be_owned_by user }
-  it { should be_grouped_into group }
+conf_d_dirs.each do |d|
+  describe file d do
+    it { should exist }
+    it { should be_directory }
+    it { should be_mode 755 }
+  end
 end
 
 case os[:family]
 when "freebsd"
-  describe file("/etc/rc.conf.d/syslogd") do
+  describe file("/etc/rc.conf.d/#{service}") do
+    it { should exist }
+    it { should be_mode 644 }
     it { should be_file }
+    its(:content) { should match(/Managed by ansible/) }
+  end
+
+  describe file "/usr/local/etc/syslog.d/foo.conf" do
+    it { should exist }
+    it { should be_mode 775 }
+    its(:content) { should match(/Managed by ansible/) }
   end
 end
 

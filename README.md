@@ -1,4 +1,4 @@
-# ansible-role-syslogd
+# `trombik.syslogd`
 
 A brief description of the role goes here.
 
